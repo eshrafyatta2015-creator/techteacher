@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>تطبيق معلمي التكنولوجيا | مديرية التربية والتعليم – يطا</title>
+<meta name="description" content="تطبيق خاص بمعلمي التكنولوجيا في مديرية التربية والتعليم – يطا: بحث مطوّر عن السجلات، عرض وتعديل البيانات الشخصية والبرنامج المدرسي الأسبوعي.">
+<meta name="author" content="مديرية التربية والتعليم – يطا">
+<meta name="theme-color" content="#146C4F">
+<meta name="color-scheme" content="light">
+
+<!-- ============ أيقونات التطبيق ============ -->
+<link rel="icon" href="./favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./icons/favicon-16.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
+<link rel="manifest" href="./manifest.webmanifest">
+
+<!-- ============ تثبيت كتطبيق مستقل ============ -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="معلمو التكنولوجيا">
+<meta name="application-name" content="معلمو التكنولوجيا">
+<meta name="msapplication-TileColor" content="#146C4F">
+<meta name="msapplication-TileImage" content="./icons/icon-192.png">
+
+<link rel="preload" as="style" href="./css/app.css">
+<link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">تخطَّ إلى المحتوى</a>
+
+<!-- ==================== الترويسة ==================== -->
+<header class="app-header" id="appHeader">
+  <div class="brand">
+    <img class="brand-logo" src="./icons/icon-192.png" alt="شعار مديرية التربية والتعليم – يطا" width="44" height="44">
+    <div class="brand-text">
+      <h1>تطبيق معلمي التكنولوجيا</h1>
+      <p>مديرية التربية والتعليم – يطا</p>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <span class="net-badge" id="netBadge" data-state="online" role="status">
+      <span class="dot" aria-hidden="true"></span><span class="net-text">متصل</span>
+    </span>
+
+    <button type="button" class="btn btn-ghost" id="refreshBtn" title="تحديث البيانات من الجدول" aria-label="تحديث البيانات">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      تحديث
+    </button>
+
+    <button type="button" class="btn btn-primary" id="installBtn" hidden>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5v2zm7-18L5.33 9h4v6h5.33V9h4L12 2z"/></svg>
+      تثبيت التطبيق
+    </button>
+  </div>
+</header>
+
+<!-- ==================== شريط دون اتصال ==================== -->
+<div class="offline-banner" id="offlineBanner" hidden role="alert">
+  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+  <span id="offlineText">أنت غير متصل بالإنترنت — يتم عرض آخر نسخة محفوظة.</span>
+</div>
+
+<main id="main">
+
+  <!-- ==================== قسم البحث ==================== -->
+  <section class="card search-card" aria-labelledby="searchHeading">
+    <h2 class="sr-only" id="searchHeading">البحث في سجلات المعلمين</h2>
+
+    <div class="search-row">
+      <div class="search-field">
+        <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+        <input type="search" id="searchInput" class="search-input"
+               placeholder="ابحث بالاسم أو رقم الهوية أو المدرسة…"
+               autocomplete="off" autocorrect="off" spellcheck="false"
+               enterkeyhint="search"
+               aria-label="نص البحث" aria-controls="resultsList" aria-autocomplete="list">
+        <button type="button" class="search-clear" id="clearSearchBtn" hidden aria-label="مسح نص البحث">✕</button>
+      </div>
+
+      <label class="sr-only" for="searchMode">نطاق البحث</label>
+      <select id="searchMode" class="select select-mode"></select>
+    </div>
+
+    <div class="filters-row" id="filtersRow">
+      <label class="filter">
+        <span>المؤهل العلمي</span>
+        <select id="filterDegree" class="select"><option value="">الكل</option></select>
+      </label>
+      <label class="filter">
+        <span>المدرسة</span>
+        <select id="filterSchool" class="select"><option value="">الكل</option></select>
+      </label>
+      <label class="filter">
+        <span>التخصص</span>
+        <select id="filterSpecialty" class="select"><option value="">الكل</option></select>
+      </label>
+      <button type="button" class="btn btn-ghost btn-sm" id="resetFiltersBtn">إعادة ضبط</button>
+    </div>
+
+    <div class="search-meta">
+      <span id="resultCount" class="result-count" role="status" aria-live="polite">جارٍ التحميل…</span>
+      <span id="searchTime" class="search-time"></span>
+    </div>
+
+    <div class="recents" id="recentsRow" hidden>
+      <span class="recents-label">عمليات بحث سابقة:</span>
+      <div class="recents-chips" id="recentsChips"></div>
+    </div>
+
+    <ul class="results" id="resultsList" role="listbox" aria-label="نتائج البحث"></ul>
+
+    <div class="empty-state" id="emptyState" hidden>
+      <svg viewBox="0 0 24 24" width="44" height="44" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+      <p class="empty-title">لا توجد نتائج مطابقة</p>
+      <p class="empty-hint">جرّب: كتابة جزء من الاسم، أو آخر 4 أرقام من رقم الهوية، أو اسم المدرسة.</p>
+    </div>
+  </section>
+
+  <!-- ==================== سجل المعلم ==================== -->
+  <section class="card record-card" id="recordPanel" hidden aria-labelledby="recordTitle">
+    <div class="panel-head">
+      <div>
+        <span class="panel-kicker" id="recordKicker">سجل جديد</span>
+        <h2 id="recordTitle">بيانات المعلم/ة</h2>
+      </div>
+      <div class="panel-actions">
+        <button type="button" class="btn btn-ghost btn-sm" id="newRecordBtn">+ سجل جديد</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="clearFormBtn">مسح النموذج</button>
+      </div>
+    </div>
+
+    <div class="draft-note" id="draftNote" hidden>
+      تم استرجاع مسودة محفوظة سابقاً.
+      <button type="button" class="link-btn" id="discardDraftBtn">تجاهلها</button>
+    </div>
+
+    <h3 class="section-title">البيانات الشخصية</h3>
+    <div class="form-grid" id="formGrid"></div>
+
+    <h3 class="section-title">البرنامج المدرسي
+      <small>يُعبَّأ باسم الصف</small>
+    </h3>
+    <p class="section-note">أدخل اسم الصف في كل خانة — مثل: <code>10-أ</code></p>
+
+    <div class="table-scroll" tabindex="0" role="region" aria-label="جدول البرنامج الأسبوعي قابل للتمرير">
+      <table class="schedule" id="scheduleTable">
+        <caption class="sr-only">البرنامج الأسبوعي للمعلم: خمسة أيام وسبع حصص</caption>
+      </table>
+    </div>
+
+    <div class="form-footer">
+      <div class="save-area">
+        <button type="button" class="btn btn-primary btn-lg" id="saveBtn">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H5V5h10v4z"/></svg>
+          حفظ في الجدول
+        </button>
+        <span class="save-status" id="saveStatus" role="status" aria-live="polite"></span>
+      </div>
+      <p class="required-note"><span class="req">*</span> الحقول المطلوبة</p>
+    </div>
+  </section>
+
+  <!-- ==================== حالة التحميل ==================== -->
+  <section class="card loading-card" id="loadingCard">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>جارٍ تحميل سجلات المعلمين…</p>
+    <div class="skeleton-list" aria-hidden="true">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </section>
+
+  <!-- ==================== حالة الخطأ ==================== -->
+  <section class="card error-card" id="errorCard" hidden>
+    <h2>تعذّر تحميل البيانات</h2>
+    <p id="errorMessage"></p>
+    <div class="error-actions">
+      <button type="button" class="btn btn-primary" id="retryBtn">إعادة المحاولة</button>
+      <button type="button" class="btn btn-ghost" id="offlineDataBtn" hidden>عرض النسخة المحفوظة</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  <p>تطبيق معلمي التكنولوجيا — مديرية التربية والتعليم – يطا</p>
+  <p class="footer-meta">
+    <span id="dataStatus"></span> ·
+    <button type="button" class="link-btn" id="installHelpBtn">كيف أثبّت التطبيق على جهازي؟</button>
+  </p>
+</footer>
+
+<!-- ==================== نافذة تعليمات التثبيت ==================== -->
+<dialog class="dialog" id="installDialog" aria-labelledby="installDialogTitle">
+  <form method="dialog" class="dialog-inner">
+    <h2 id="installDialogTitle">تثبيت التطبيق على جهازك</h2>
+    <p class="dialog-lead">بعد التثبيت يظهر أيقونة التطبيق في قائمة برامجك، ويفتح كتطبيق مستقل بدون شريط المتصفح.</p>
+
+    <div class="install-steps">
+      <div class="step">
+        <span class="step-num">1</span>
+        <div>
+          <h3>على هاتف أندرويد (Chrome)</h3>
+          <p>افتح الصفحة ثم اضغط قائمة المتصفح <strong>⋮</strong> ← <strong>«تثبيت التطبيق»</strong> أو <strong>«إضافة إلى الشاشة الرئيسية»</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <div>
+          <h3> على آيفون / آيباد (Safari)</h3>
+          <p>اضغط زر <strong>المشاركة</strong> ⬆ ثم <strong>«إضافة إلى الشاشة الرئيسية»</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <div>
+          <h3>على كمبيوتر (Chrome / Edge)</h3>
+          <p>اضغط أيقونة <strong>تثبيت</strong> في شريط العنوان، أو زر <strong>«تثبيت التطبيق»</strong> أعلى هذه الصفحة.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-primary" id="dialogInstallBtn">تثبيت الآن</button>
+      <button type="submit" class="btn btn-ghost">إغلاق</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ==================== التوست ==================== -->
+<div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ==================== السكربتات ==================== -->
+<script src="./js/config.js"></script>
+<script src="./js/store.js"></script>
+<script src="./js/search.js"></script>
+<script src="./js/data.js"></script>
+<script src="./js/sheets.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>

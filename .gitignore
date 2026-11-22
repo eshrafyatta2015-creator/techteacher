@@ -1,0 +1,18 @@
+# ملفات النظام
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# محررات وبيئات
+.vscode/
+.idea/
+*.swp
+
+# الاعتمادات المحلية (لا تُستخدم في هذا المشروع — واجهة عامة فقط)
+.env
+.env.*
+
+# سجلات وأدلة اختبار مؤقتة
+*.log
+npm-debug.log*
+node_modules/
