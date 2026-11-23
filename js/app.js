@@ -717,10 +717,8 @@
       els.netBadge.dataset.state = online ? 'online' : 'offline';
       els.netBadge.querySelector('.net-text').textContent = online ? 'متصل' : 'دون اتصال';
       if (online) {
-        if (els.offlineText.textContent.indexOf('آخر نسخة') !== -1) {
-          // نُبقي الشريط لكن نغيّر الصياغة
-          els.offlineText.textContent = 'تعذّر التحديث — يُعرض آخر نسخة محفوظة.';
-        }
+        // عاد الاتصال → نُخفي الشريط؛ إن فشل التحديث سيعيده applyData بحالة stale
+        els.offlineBanner.hidden = true;
       } else {
         els.offlineBanner.hidden = false;
         els.offlineText.textContent = 'أنت غير متصل بالإنترنت — يتم عرض آخر نسخة محفوظة.';
@@ -852,8 +850,16 @@
       if (!out || !out.records) return;
       state.records = out.records;
       state.index = S.buildIndex(out.records);
+      state.ready = true;
       populateFilters();
       runSearch();
+      // التحديث الخلفي نجح → نُخفي شريط التنبيه ونُحدّح الحالة
+      els.offlineBanner.hidden = true;
+      els.loadingCard.hidden = true;
+      els.errorCard.hidden = true;
+      var stamp = out.meta && out.meta.fetchedAt ? new Date(out.meta.fetchedAt) : new Date();
+      els.dataStatus.textContent = out.records.length + ' سجلًا · مباشر · ' +
+        stamp.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
     });
 
     /* --- اختصار: / للبحث --- */
