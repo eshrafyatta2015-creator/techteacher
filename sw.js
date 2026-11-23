@@ -12,7 +12,7 @@
 
 'use strict';
 
-var VERSION = 'techteacher-v1.1.0';
+var VERSION = 'techteacher-v1.2.0';
 var SHELL_CACHE = VERSION + '-shell';
 var DATA_CACHE = VERSION + '-data';
 var ASSET_CACHE = VERSION + '-assets';
@@ -28,6 +28,15 @@ var SHELL_FILES = [
   './js/data.js',
   './js/sheets.js',
   './js/app.js',
+  './login.html',
+  './teacher.html',
+  './admin.html',
+  './css/gateway.css',
+  './js/gateway.js',
+  './js/auth.js',
+  './js/login.js',
+  './js/teacher.js',
+  './js/admin.js',
   './manifest.webmanifest',
   './favicon.ico',
   './icons/icon-192.png',
